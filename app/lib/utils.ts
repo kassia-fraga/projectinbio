@@ -24,8 +24,10 @@ export async function compressFiles(files: File[]) {
       return null;
     }
   });
+
   return (await Promise.all(compressPromisses)).filter((file) => file !== null);
 }
+
 export const compressImage = (file: File): Promise<File> => {
   return new Promise((resolve, reject) => {
     const options = {
@@ -34,8 +36,26 @@ export const compressImage = (file: File): Promise<File> => {
       useWebWorker: true,
       fileType: 'image/png',
     };
+
     imageCompression(file, options).then((compressedFile) => {
       resolve(compressedFile);
     });
   });
 };
+
+export function formatUrl(url: string) {
+  const formattedUrl = url.startsWith('http') ? url : `https://${url}`;
+  return formattedUrl;
+}
+
+export function triggerImageInput(id: string) {
+  document.getElementById(id)?.click();
+}
+export function handleImageInput(e: React.ChangeEvent<HTMLInputElement>) {
+  const file = e.target.files?.[0] ?? null;
+  if (file) {
+    const imageURL = URL.createObjectURL(file);
+    return imageURL;
+  }
+  return null;
+}
